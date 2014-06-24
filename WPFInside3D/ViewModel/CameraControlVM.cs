@@ -22,6 +22,12 @@ namespace WPFInside3D
             public Point3D CamPositionInit { get; set; }
             public Point3D CamLookAtInit { get; set; }
 
+            public CameraControl Control
+            {
+                get { return this.control; }
+                set { }
+            }
+
             #endregion
 
             #region command properties

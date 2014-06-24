@@ -57,8 +57,23 @@ namespace WPFInside3D
             protected override void CreateScene()
             {
                 // Add scene geometry
-                TriangleModel geometry = new Plane(20.0, 20.0);
-                this.Content.Children.Add(geometry.model);
+                // just a plane
+                //TriangleModel geometry = new Plane(20.0, 20.0);
+                //this.Content.Children.Add(geometry.model);
+
+                // and some cubes
+                System.Random rnd = new System.Random();
+                for (int i = 0; i < 20; i++)
+                {
+                    double length = 2.0 + (double)rnd.Next(1, 200) / 50;
+                    Cube aCube = new Cube(length, length, length);
+
+                    double x = rnd.Next(1, 200) / 10.0 - 10.0;
+                    double y = rnd.Next(1, 200) / 20.0 - 5;
+                    double z = rnd.Next(1, 200) / 10.0 - 10.0;
+                    aCube.model.Transform = new TranslateTransform3D(x, y, z);
+                    this.Content.Children.Add(aCube.model);
+                }
 
                 // Add the light
                 PointLight light = new PointLight(Colors.White, new Point3D(0.0, 10.0, 0.0));

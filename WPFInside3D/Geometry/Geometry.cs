@@ -50,6 +50,11 @@ namespace WPFInside3D
                 return n;
             }
 
+            public Rect3D BoundingBox
+            {
+                get { return this.mesh.Bounds; }               
+            }
+
             public Point3D p1 { get; private set; }
             public Point3D p2 { get; private set; }
             public Point3D p3 { get; private set; }
@@ -80,7 +85,16 @@ namespace WPFInside3D
             public Material material { get; protected set; }
             public Model3DGroup model { get; protected set; }
 
-            protected static Material defaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Red));  // is this correct???
+            protected static Material defaultMaterial;
+            
+            static TriangleModel()
+            {
+                SolidColorBrush brush = new SolidColorBrush(Colors.LawnGreen);
+                brush.Opacity = 0.5;
+                defaultMaterial = new DiffuseMaterial(brush);  
+            }
+            
+            
         }
 
         public class Plane : TriangleModel
@@ -134,35 +148,35 @@ namespace WPFInside3D
             {
                 Point3D p1 = new Point3D(0.0, 0.0, 0.0);
                 Point3D p2 = new Point3D(length, 0.0, 0.0);
-                Point3D p3 = new Point3D(length, 0.0, -width);
-                Point3D p4 = new Point3D(0.0, 0.0, -width);
+                Point3D p3 = new Point3D(length, 0.0, width);
+                Point3D p4 = new Point3D(0.0, 0.0, width);
 
                 Point3D p5 = new Point3D(0.0, height, 0.0);
                 Point3D p6 = new Point3D(length, height, 0.0);
-                Point3D p7 = new Point3D(length, height, -width);
-                Point3D p8 = new Point3D(0.0, height, -width);
+                Point3D p7 = new Point3D(length, height, width);
+                Point3D p8 = new Point3D(0.0, height, width);
 
                 // bottom
-                this.Add(new Triangle(p1, p4, p3));
-                this.Add(new Triangle(p1, p3, p2));
+                this.Add(new Triangle(p1, p2, p3));
+                this.Add(new Triangle(p1, p3, p4));
                 // top
-                this.Add(new Triangle(p5, p7, p8));
-                this.Add(new Triangle(p5, p6, p7));
+                this.Add(new Triangle(p5, p7, p6));
+                this.Add(new Triangle(p5, p8, p7));
                 // front
-                this.Add(new Triangle(p1, p2, p6));
-                this.Add(new Triangle(p1, p6, p5));
+                this.Add(new Triangle(p4, p7, p8));
+                this.Add(new Triangle(p4, p3, p7));
                 // back
-                this.Add(new Triangle(p4, p8, p7));
-                this.Add(new Triangle(p4, p7, p3));
+                this.Add(new Triangle(p1, p5, p6));
+                this.Add(new Triangle(p1, p6, p2));
                 // left
-                this.Add(new Triangle(p1, p5, p8));
-                this.Add(new Triangle(p1, p8, p4));
+                this.Add(new Triangle(p1, p4, p8));
+                this.Add(new Triangle(p1, p8, p5));
                 // right
-                this.Add(new Triangle(p2, p7, p6));
-                this.Add(new Triangle(p2, p3, p7));
+                this.Add(new Triangle(p2, p7, p3));
+                this.Add(new Triangle(p2, p6, p7));
 
                 this.BuildModel();
-                this.CenterModel(new Vector3D(length * -0.5, height * -0.5, width * 0.5));
+                this.CenterModel(new Vector3D(length * -0.5, height * -0.5, width * -0.5));
             }
 
             public double length { get; private set; }

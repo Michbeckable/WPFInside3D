@@ -27,9 +27,12 @@ namespace WPFInside3D
         public Mode mode { get; private set; }
 
         public bool ZoomToObject { get; set; }
-        public double multPan { get; set; }
-        public double multRotate { get; set; }
-        public double multZoom { get; set; }
+        public double MultPan { get; set; }
+        public double MultRotate { get; set; }
+        public double MultZoom { get; set; }
+        public double LimitZoom { get; set; }
+        public double FOV { get; set; }
+        public Vector3D UpVector { get; set; }
 
         private Point mousePosOld { get; set; }
 
@@ -56,9 +59,10 @@ namespace WPFInside3D
             this.UpdateTransformations();
 
             this.ZoomToObject = true;
-            this.multPan = 0.05;
-            this.multRotate = 0.01;
-            this.multZoom = 1.0;
+            this.MultPan = 0.05;
+            this.MultRotate = 0.01;
+            this.MultZoom = 1.0;
+            this.LimitZoom = 150.0;
 
             this.mode = Mode.idle;
         }
@@ -119,15 +123,15 @@ namespace WPFInside3D
             Vector vDelta = (this.mousePosOld - pMouse);
             this.mousePosOld = pMouse;
 
-            this.coords.Phi += this.multRotate * vDelta.X;
-            this.coords.Theta += this.multRotate * -vDelta.Y;
+            this.coords.Phi += this.MultRotate * vDelta.X;
+            this.coords.Theta += this.MultRotate * -vDelta.Y;
             this.UpdateTransformations();
         }
 
         public void Pan(Point pMouse)
         {
             Vector vDelta = (this.mousePosOld - pMouse);
-            Vector3D vPan = new Vector3D(vDelta.X * this.multPan, vDelta.Y * this.multPan, 0.0);
+            Vector3D vPan = new Vector3D(vDelta.X * this.MultPan, vDelta.Y * this.MultPan, 0.0);
             vPan.Y *= -1;
             this.mousePosOld = pMouse;
 
@@ -147,7 +151,7 @@ namespace WPFInside3D
             double diffZoom = delta;
 
             // limit zoom 
-            if (diffZoom < 0 && this.coords.Radius >= 100)
+            if (diffZoom < 0 && this.coords.Radius >= this.LimitZoom)
                 return;
 
             // change radius to zoom
@@ -166,6 +170,61 @@ namespace WPFInside3D
             }
 
             this.UpdateTransformations();
+        }
+
+        public void ZoomExtents(Rect3D bounds)
+        {
+            this.Target = new Point3D(bounds.Location.X + bounds.SizeX * 0.5, bounds.Location.Y + bounds.SizeY * 0.5, bounds.Location.Z + bounds.SizeZ * 0.5);
+            this.UpdateTransformations(true);
+
+            double length = bounds.SizeX;
+            double width = bounds.SizeZ;
+            double height = bounds.SizeY;
+
+            Point3D p1 = new Point3D(0.0, 0.0, 0.0);
+            Point3D p2 = new Point3D(length, 0.0, 0.0);
+            Point3D p3 = new Point3D(length, 0.0, width);
+            Point3D p4 = new Point3D(0.0, 0.0, width);
+
+            Point3D p5 = new Point3D(0.0, height, 0.0);
+            Point3D p6 = new Point3D(length, height, 0.0);
+            Point3D p7 = new Point3D(length, height, width);
+            Point3D p8 = new Point3D(0.0, height, width);
+
+            List<Point3D> points = new List<Point3D>();
+            points.Add(p1);
+            points.Add(p2);
+            points.Add(p3);
+            points.Add(p4);
+            points.Add(p5);
+            points.Add(p6);
+            points.Add(p7);
+            points.Add(p8);
+
+            double fovX = 60.0;
+            double fovY = 35.0; // calculate from aspect ratio
+
+            double tanfovHalfX = System.Math.Tan(fovX * 0.5 * System.Math.PI / 180.0);
+            double tanfovHalfY = System.Math.Tan(fovY * 0.5 * System.Math.PI / 180.0);
+            double zCamMoveMin = -1000;
+            for (int i = 0; i < points.Count; i++)
+            {
+                Point3D p = points[i];
+                p += new Vector3D(bounds.Location.X, bounds.Location.Y, bounds.Location.Z);
+                p = this.GetViewMatrix().Transform(p);
+
+                double zFitX = -System.Math.Abs(p.X) / tanfovHalfX;
+                double zFitY = -System.Math.Abs(p.Y) / tanfovHalfY;
+                
+                double zCamMove = (zFitX < zFitY) ? p.Z - zFitX : p.Z - zFitY;
+                if (zCamMove > zCamMoveMin)
+                {
+                    zCamMoveMin = zCamMove;
+                }
+            }
+
+            this.coords.Radius = this.coords.Radius + zCamMoveMin;
+            this.UpdateTransformations(true);
         }
 
         public void UpdateTransformations(bool sphereCoordsChanged = true)
