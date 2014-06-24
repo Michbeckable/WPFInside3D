@@ -1,0 +1,10 @@
+W:\Projekte\Softwareentwicklung\WPFInside3D\WPFInside3D\bin\Debug\WPFInside3D.dll
+W:\Projekte\Softwareentwicklung\WPFInside3D\WPFInside3D\bin\Debug\WPFInside3D.pdb
+W:\Projekte\Softwareentwicklung\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.dll
+W:\Projekte\Softwareentwicklung\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.pdb
+W:\Projekte\Softwareentwicklung\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.csprojResolveAssemblyReference.cache
+W:\Projekte\Softwareentwicklung\WPF\WPFInside3D\WPFInside3D\bin\Debug\WPFInside3D.dll
+W:\Projekte\Softwareentwicklung\WPF\WPFInside3D\WPFInside3D\bin\Debug\WPFInside3D.pdb
+W:\Projekte\Softwareentwicklung\WPF\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.csprojResolveAssemblyReference.cache
+W:\Projekte\Softwareentwicklung\WPF\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.dll
+W:\Projekte\Softwareentwicklung\WPF\WPFInside3D\WPFInside3D\obj\Debug\WPFInside3D.pdb
